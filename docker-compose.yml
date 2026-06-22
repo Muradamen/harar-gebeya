@@ -1,0 +1,32 @@
+
+
+services:
+  db:
+    image: postgres:15
+    container_name: harar_gebeya_db
+    restart: always
+    environment:
+      POSTGRES_DB: harar_gebeya
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: harar_gebeya_backend
+    restart: always
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
